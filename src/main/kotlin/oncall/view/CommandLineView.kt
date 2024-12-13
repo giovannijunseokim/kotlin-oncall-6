@@ -1,6 +1,7 @@
 package oncall.view
 
 import oncall.domain.DayOfTheWeek
+import oncall.domain.Timesheet
 
 class CommandLineView : View {
     private val viewModel: ViewModel = ViewModel()
@@ -24,7 +25,11 @@ class CommandLineView : View {
         viewModel.assignWorkers(weekdayShiftOrder, holidayShiftOrder)
     }
 
-    override fun showTimeSheet() {
-
+    override fun showTimesheet() {
+        viewModel.timesheet.run {
+            days.forEach { day: Timesheet.Day ->
+                println("${month}월 ${day.day}일 ${day.dayOfTheWeek.korName}${if (day.isWeekday && day.isHoliday(month)) "(휴일)" else ""} ${day.staff?.nickname}")
+            }
+        }
     }
 }

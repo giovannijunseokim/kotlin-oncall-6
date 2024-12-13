@@ -12,6 +12,6 @@ object Application {
     fun run() {
         view.makeTimesheet()
         view.assignWorkers()
-        view.showTimeSheet()
+        view.showTimesheet()
     }
 }
