@@ -18,33 +18,44 @@ class ViewModel {
         setShiftOrders(weekdayStaffs, holidayStaffs)
         timesheet.days.forEachIndexed { index, day: Timesheet.Day ->
             if (index == 0) {
-                if (day.isWeekday && !day.isHoliday(timesheet.month)) {
-                    day.staff = weekdayShiftOrder.peek()
-                } else {
-                    day.staff = holidayShiftOrder.peek()
-                }
+                handleFirstDay(day)
                 return@forEachIndexed
             }
-
             val yesterdayStaff = timesheet.days[index - 1].staff
             if (day.isWeekday && !day.isHoliday(timesheet.month)) {
-                var todayStaff = if (weekdayShiftOrder.tempOrder.isNotEmpty()) weekdayShiftOrder.tempOrder.removeFirst()
-                else weekdayShiftOrder.peek()
-                if (yesterdayStaff == todayStaff) {
-                    weekdayShiftOrder.tempOrder.add(todayStaff)
-                    todayStaff = weekdayShiftOrder.peek()
-                }
-                day.staff = todayStaff
+                handleWeekday(yesterdayStaff, day)
             } else {
-                var todayStaff =
-                    if (holidayShiftOrder.tempOrder.isNotEmpty()) holidayShiftOrder.tempOrder.removeFirst() else holidayShiftOrder.peek()
-                if (yesterdayStaff == todayStaff) {
-                    holidayShiftOrder.tempOrder.add(todayStaff)
-                    todayStaff = holidayShiftOrder.peek()
-                }
-                day.staff = todayStaff
+                handleHoliday(yesterdayStaff, day)
             }
         }
+    }
+
+    private fun handleFirstDay(day: Timesheet.Day) {
+        if (day.isWeekday && !day.isHoliday(timesheet.month)) {
+            day.staff = weekdayShiftOrder.peek()
+        } else {
+            day.staff = holidayShiftOrder.peek()
+        }
+    }
+
+    private fun handleWeekday(yesterdayStaff: Staff?, day: Timesheet.Day) {
+        var todayStaff = if (weekdayShiftOrder.tempOrder.isNotEmpty()) weekdayShiftOrder.tempOrder.removeFirst()
+        else weekdayShiftOrder.peek()
+        if (yesterdayStaff == todayStaff) {
+            weekdayShiftOrder.tempOrder.add(todayStaff)
+            todayStaff = weekdayShiftOrder.peek()
+        }
+        day.staff = todayStaff
+    }
+
+    private fun handleHoliday(yesterdayStaff: Staff?, day: Timesheet.Day) {
+        var todayStaff =
+            if (holidayShiftOrder.tempOrder.isNotEmpty()) holidayShiftOrder.tempOrder.removeFirst() else holidayShiftOrder.peek()
+        if (yesterdayStaff == todayStaff) {
+            holidayShiftOrder.tempOrder.add(todayStaff)
+            todayStaff = holidayShiftOrder.peek()
+        }
+        day.staff = todayStaff
     }
 
     private fun setShiftOrders(weekdayShiftOrder: List<Staff>, holidayShiftOrder: List<Staff>) {
