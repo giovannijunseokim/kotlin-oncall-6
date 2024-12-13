@@ -7,6 +7,7 @@ data class Timesheet(
     data class Day(
         val day: Int,
         val dayOfTheWeek: DayOfTheWeek,
+        var staff: Staff? = null,
     ) {
         fun isHoliday(month: Int): Boolean {
             return Holiday.isHoliday(month, day)
@@ -17,7 +18,7 @@ data class Timesheet(
     }
 
     companion object {
-        fun of(month: Int, startDayOfTheWeek: DayOfTheWeek): Timesheet {
+        fun create(month: Int, startDayOfTheWeek: DayOfTheWeek): Timesheet {
             val daysCount = when (month) {
                 2 -> 28
                 4, 6, 9, 11 -> 30

@@ -1,5 +1,17 @@
 package oncall
 
+import oncall.view.CommandLineView
+import oncall.view.View
+
 fun main() {
-    TODO("프로그램 구현")
+    Application.run()
+}
+
+object Application {
+    private val view: View = CommandLineView()
+    fun run() {
+        view.makeTimesheet()
+        view.assignWorkers()
+        view.showTimeSheet()
+    }
 }
