@@ -17,11 +17,16 @@ class CommandLineView : View {
     }
 
     override fun assignWorkers() {
-        OutputView.readWeekdayShiftOrder()
-        val weekdayShiftOrder = InputView.readShiftOrder()
-        OutputView.readHolidayShiftOrder()
-        val holidayShiftOrder = InputView.readShiftOrder()
-        viewModel.assignWorkers(weekdayShiftOrder, holidayShiftOrder)
+        var again = true
+        while (again) {
+            runCatching {
+                OutputView.readWeekdayShiftOrder()
+                val weekdayShiftOrder = InputView.readShiftOrder()
+                OutputView.readHolidayShiftOrder()
+                val holidayShiftOrder = InputView.readShiftOrder()
+                viewModel.assignWorkers(weekdayShiftOrder, holidayShiftOrder)
+            }.onSuccess { again = false }.onFailure { OutputView.showError(it) }
+        }
     }
 
     override fun showTimesheet() {
